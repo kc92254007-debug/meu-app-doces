@@ -1,0 +1,47 @@
+MEU CONTROLE DE DOCES — GUIA DE INSTALAÇÃO
+
+O QUE ESTÁ INCLUÍDO
+- Aplicativo web responsivo para celular e computador.
+- Cadastro de produtos, custo, preço e estoque.
+- Registro de vendas e cálculo de lucro bruto estimado.
+- Cadastro de clientes.
+- Controle de fiado e pagamentos parciais.
+- Comprovante imprimível / salvar como PDF.
+- Relatórios por período e exportação CSV.
+- Backup e restauração JSON.
+- PWA instalável quando publicado em um endereço HTTPS.
+- Armazenamento local por padrão; sincronização Supabase opcional.
+
+IMPORTANTE SOBRE A NUVEM
+O aplicativo funciona imediatamente no navegador e guarda dados localmente nesse aparelho/navegador. Para sincronizar entre dispositivos, você precisa criar/configurar um projeto Supabase gratuito. Nenhuma conta foi criada por você e não há credenciais incluídas.
+
+PUBLICAR GRATUITAMENTE COM GITHUB PAGES
+1. Crie/entre em https://github.com
+2. Crie um repositório público chamado meu-controle-doces.
+3. Envie os arquivos index.html, manifest.json e sw.js para a raiz do repositório.
+4. Abra Settings > Pages.
+5. Em Build and deployment, selecione Deploy from a branch, branch main, folder /(root), e salve.
+6. Aguarde o GitHub publicar o endereço HTTPS do app.
+7. Abra o endereço no Chrome do Android. Menu ⋮ > "Instalar app" ou "Adicionar à tela inicial".
+O aplicativo pode ser usado pelo navegador sem instalação também. A disponibilidade/nomes das opções podem variar.
+
+CONFIGURAR SINCRONIZAÇÃO NA NUVEM COM SUPABASE
+1. Crie projeto em https://supabase.com (plano gratuito sujeito a limites e mudanças).
+2. No painel do projeto, encontre Project URL e a chave publicável/anon (NUNCA use service_role).
+3. Abra index.html em um editor de texto.
+4. Procure as linhas:
+   const CLOUD_URL='COLE_AQUI_A_URL_DO_SUPABASE', CLOUD_KEY='COLE_AQUI_A_CHAVE_ANON_DO_SUPABASE';
+5. Substitua os textos pelos dados do seu projeto.
+6. No painel Supabase, abra SQL Editor e execute o conteúdo de supabase_setup.sql.
+7. Salve e publique novamente o index.html no GitHub Pages.
+8. Abra o app > Backup. Cadastre-se com e-mail e senha. Se o Supabase pedir confirmação, confirme o e-mail.
+9. Para sincronizar o aparelho atual com a nuvem, use "Sincronizar agora". Para carregar dados já salvos na nuvem em outro aparelho, entre com a mesma conta e use o fluxo de sincronização.
+10. Faça backup JSON periodicamente.
+
+CUIDADOS
+- Nunca compartilhe sua senha ou a chave service_role.
+- O aplicativo usa autenticação Supabase e políticas RLS para limitar cada conta aos próprios dados.
+- O primeiro login em um aparelho vazio não importa automaticamente os dados da nuvem; use o botão Sincronizar agora e siga as confirmações do app. Evite sobrescrever dados sem backup.
+- O sistema não emite nota fiscal e não substitui sistema fiscal/contábil.
+- O lucro exibido é bruto estimado: inclua embalagem, entrega, energia, taxas e perdas no custo unitário se quiser que o cálculo considere essas despesas.
+- O modo local não sincroniza por si só e limpar os dados do navegador pode apagá-los. Use backup.

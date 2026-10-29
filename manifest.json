@@ -1,0 +1,10 @@
+{
+  "name": "Meu Controle de Doces",
+  "short_name": "Controle Doces",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4f7f5",
+  "theme_color": "#173d32",
+  "description": "Controle de vendas, estoque, lucro, clientes e fiado para doces.",
+  "icons": []
+}
