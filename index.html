@@ -26,7 +26,7 @@
 const $=s=>document.querySelector(s), money=n=>Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}), today=()=>new Date().toISOString().slice(0,10), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const blank=()=>({products:[],clients:[],sales:[],payments:[],expenses:[]});
 let db=load(), tab='inicio', supa=null, user=null, cloudConfigured=false, syncTimer=null;
-function load(){try{return {...blank(),...JSON.parse(localStorage.getItem('docesDB')||'{}')}}catch{return blank()}}
+function load(){try{const saved=JSON.parse(localStorage.getItem('docesDB')||'{}');const base={...blank(),...(saved&&typeof saved==='object'?saved:{})};for(const k of ['products','clients','sales','payments','expenses'])if(!Array.isArray(base[k]))base[k]=[];return base}catch{return blank()}}
 function saveLocal(){localStorage.setItem('docesDB',JSON.stringify(db)); updateStatus(); if(user&&supa){clearTimeout(syncTimer);syncTimer=setTimeout(syncCloud,800)}}
 function id(){return 'D'+Date.now().toString(36).toUpperCase()+Math.random().toString(36).slice(2,5).toUpperCase()}
 function productByName(name){return db.products.find(p=>p.name===name)}
@@ -93,6 +93,6 @@ async function signIn(){if(!cloudConfigured)return alert('Primeiro configure a U
 async function signOut(){if(supa)await supa.auth.signOut();user=null;updateStatus();render()}
 async function syncCloud(pull=false){if(!cloudConfigured||!supa)return alert('A nuvem ainda não foi configurada.');if(!user){let {data}=await supa.auth.getUser();user=data.user}if(!user)return alert('Entre na sua conta da nuvem primeiro.');try{if(pull){let {data,error}=await supa.from('app_state').select('payload').eq('user_id',user.id).maybeSingle();if(error)throw error;if(data?.payload&&confirm('Substituir os dados deste aparelho pelos dados salvos na nuvem?')){db={...blank(),...data.payload};saveLocal();render()}return}let {error}=await supa.from('app_state').upsert({user_id:user.id,payload:db,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)throw error;alert('Dados sincronizados com a nuvem.')}catch(e){alert('Não foi possível sincronizar: '+e.message+'\\nConfira o SQL e as configurações no LEIA-ME.txt.')}}
 if('serviceWorker' in navigator && location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-initCloud();render();
+try{initCloud();render()}catch(err){console.error('Erro ao iniciar Meu Controle de Doces:',err);const view=document.querySelector('#view');if(view)view.innerHTML='<section class="card"><h2>Não foi possível carregar o sistema</h2><p>O aplicativo encontrou um erro ao iniciar. Atualize a página. Seus dados locais não foram apagados.</p><p class="muted">Se continuar, envie ao suporte esta mensagem: '+String(err&&err.message||err).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))+'</p></section>'}
 </script>
 </body></html>
